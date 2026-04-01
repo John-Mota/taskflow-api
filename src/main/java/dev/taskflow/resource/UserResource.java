@@ -17,8 +17,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,7 +38,7 @@ public class UserResource {
 
     @GET
     @Path("/{id}")
-    public Response getById(@PathParam("id") Long id) {
+    public Response getById(@PathParam("id") UUID id) {
         return Response.ok(userService.getUserById(id)).build();
     }
 
@@ -46,21 +48,21 @@ public class UserResource {
             @QueryParam("size") Integer size) {
         int pageIndex = (page != null && page >= 0) ? page : 0;
         int pageSize = (size != null && size > 0) ? size : 20;
-        
+
         List<UserResponse> users = userService.listUsers(pageIndex, pageSize);
         return Response.ok(users).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") Long id, @Valid UserUpdateDTO updateDTO) {
+    public Response update(@PathParam("id") UUID id, @Valid UserUpdateDTO updateDTO) {
         UserResponse updated = userService.updateUser(id, updateDTO);
         return Response.ok(updated).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") Long id) {
+    public Response delete(@PathParam("id") UUID id) {
         userService.deleteUser(id);
         return Response.noContent().build();
     }

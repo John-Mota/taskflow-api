@@ -15,14 +15,14 @@ import static org.hamcrest.Matchers.notNullValue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserResourceTest {
 
-    private static Long userId;
+    private static String userId;
 
     @Test
     @Order(1)
     public void testCreateUser() {
         String userJson = """
                 {
-                  "username": "testuser",
+                  "name": "testuser",
                   "email": "testuser@example.com",
                   "password": "password123",
                   "role": "ADMIN"
@@ -37,7 +37,7 @@ public class UserResourceTest {
                 .then()
                 .statusCode(201)
                 .body("id", notNullValue())
-                .body("username", equalTo("testuser"))
+                .body("name", equalTo("testuser"))
                 .body("email", equalTo("testuser@example.com"))
                 .body("role", equalTo("ADMIN"))
                 .extract()
@@ -49,7 +49,7 @@ public class UserResourceTest {
     public void testCreateDuplicateUser() {
         String userJson = """
                 {
-                  "username": "testuser",
+                  "name": "testuser",
                   "email": "testuser2@example.com",
                   "password": "password123",
                   "role": "ADMIN"
@@ -73,7 +73,7 @@ public class UserResourceTest {
                 .get("/api/users/" + userId)
                 .then()
                 .statusCode(200)
-                .body("username", equalTo("testuser"))
+                .body("name", equalTo("testuser"))
                 .body("email", equalTo("testuser@example.com"));
     }
 
@@ -82,7 +82,7 @@ public class UserResourceTest {
     public void testUpdateUser() {
         String updateJson = """
                 {
-                  "username": "updateduser",
+                  "name": "updateduser",
                   "role": "USER"
                 }
                 """;
@@ -94,7 +94,7 @@ public class UserResourceTest {
                 .put("/api/users/" + userId)
                 .then()
                 .statusCode(200)
-                .body("username", equalTo("updateduser"))
+                .body("name", equalTo("updateduser"))
                 .body("email", equalTo("testuser@example.com")) // Email should remain
                 .body("role", equalTo("USER"));
     }

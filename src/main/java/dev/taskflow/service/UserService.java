@@ -1,6 +1,7 @@
 package dev.taskflow.service;
 
-import dev.taskflow.domain.User;
+import dev.taskflow.domain.Entity.User;
+import dev.taskflow.domain.enuns.Role;
 import dev.taskflow.dto.UserRequest;
 import dev.taskflow.dto.UserResponse;
 import dev.taskflow.dto.UserUpdateDTO;
@@ -12,7 +13,9 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -26,21 +29,21 @@ public class UserService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new WebApplicationException("Email already in use", Response.Status.CONFLICT);
         }
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new WebApplicationException("Username already in use", Response.Status.CONFLICT);
+        if (userRepository.findByName(request.getName()).isPresent()) {
+            throw new WebApplicationException("Name already in use", Response.Status.CONFLICT);
         }
 
         User user = new User();
-        user.setUsername(request.getUsername());
+        user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPasswordHash(BcryptUtil.bcryptHash(request.getPassword()));
-        user.setRole(request.getRole() != null ? request.getRole() : "USER");
+        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
 
         userRepository.persist(user);
         return new UserResponse(user);
     }
 
-    public UserResponse getUserById(Long id) {
+    public UserResponse getUserById(UUID id) {
         User user = userRepository.findByIdOptional(id)
                 .orElseThrow(() -> new WebApplicationException("User not found", Response.Status.NOT_FOUND));
         return new UserResponse(user);
@@ -52,7 +55,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(Long id, UserUpdateDTO updateDTO) {
+    public UserResponse updateUser(UUID id, UserUpdateDTO updateDTO) {
         User user = userRepository.findByIdOptional(id)
                 .orElseThrow(() -> new WebApplicationException("User not found", Response.Status.NOT_FOUND));
 
@@ -63,11 +66,11 @@ public class UserService {
             user.setEmail(updateDTO.getEmail());
         }
 
-        if (updateDTO.getUsername() != null && !updateDTO.getUsername().equals(user.getUsername())) {
-            if (userRepository.findByUsername(updateDTO.getUsername()).isPresent()) {
-                throw new WebApplicationException("Username already in use", Response.Status.CONFLICT);
+        if (updateDTO.getName() != null && !updateDTO.getName().equals(user.getName())) {
+            if (userRepository.findByName(updateDTO.getName()).isPresent()) {
+                throw new WebApplicationException("Name already in use", Response.Status.CONFLICT);
             }
-            user.setUsername(updateDTO.getUsername());
+            user.setName(updateDTO.getName());
         }
 
         if (updateDTO.getRole() != null) {
@@ -78,7 +81,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(UUID id) {
         boolean deleted = userRepository.deleteById(id);
         if (!deleted) {
             throw new WebApplicationException("User not found", Response.Status.NOT_FOUND);

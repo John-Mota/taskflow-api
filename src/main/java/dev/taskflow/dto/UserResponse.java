@@ -1,32 +1,34 @@
 package dev.taskflow.dto;
 
-import dev.taskflow.domain.User;
+import dev.taskflow.domain.Entity.User;
+import dev.taskflow.domain.enuns.Role;
+import java.util.UUID;
 
 public class UserResponse {
 
-    private Long id;
-    private String username;
+    private UUID id;
+    private String name;
     private String email;
-    private String role;
+    private Role role;
 
     public UserResponse() {}
 
     public UserResponse(User user) {
         this.id = user.getId();
-        this.username = user.getUsername();
+        this.name = user.getName();
         this.email = user.getEmail();
         this.role = user.getRole();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }

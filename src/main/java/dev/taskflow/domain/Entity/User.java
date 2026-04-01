@@ -1,32 +1,41 @@
-
 package dev.taskflow.domain.Entity;
 
 import dev.taskflow.domain.enuns.Role;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
+import java.util.List;
 
-@AllArgsConstructor
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class User extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    private UUID id;
 
     @Column(nullable = false)
-    public String name;
+    private String name;
 
     @Column(nullable = false, unique = true)
-    public String email;
+    private String email;
 
     @Column(name = "password_hash", nullable = false)
-    public String passwordHash;
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Role role;
+    private Role role;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Project> projects;
 }

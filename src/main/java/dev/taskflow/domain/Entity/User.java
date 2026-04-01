@@ -1,12 +1,16 @@
 
 package dev.taskflow.domain.Entity;
 
+import dev.taskflow.domain.enuns.Role;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+
 import java.util.UUID;
 
+@AllArgsConstructor
 @Entity
-@Table(name = "users") // Renomeado para evitar conflito com a palavra-chave 'user' em alguns bancos de dados
+@Table(name = "users")
 public class User extends PanacheEntityBase {
 
     @Id
@@ -25,15 +29,4 @@ public class User extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public Role role;
-
-    // Construtor padrão exigido pelo JPA
-    public User() {
-    }
-
-    public User(String name, String email, String passwordHash, Role role) {
-        this.name = name;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-    }
 }
